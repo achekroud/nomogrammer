@@ -69,10 +69,7 @@ df$lo_y <- logodds(df$y)
     
 ggplot(df) +
     geom_line(aes(x = x, y = lo_y, color = line)) +
-    geom_vline(aes(x = x, y = lo_y, color = line), xintercept = middle) + 
-    # geom_text(aes(x = rep(middle, length(ticks_log_lrs)),
-    #               y = ticks_log_lrs, label = "+")) +
-    # geom_segment(aes(x = middle, xend = middle, y = 1.99, yend = -2)) +
+    geom_vline(xintercept = middle) + 
     ylab("prior \n prob.") +
     scale_y_continuous(
         limits = range(ticks_logodds),
@@ -89,7 +86,12 @@ ggplot(df) +
 
 
 
-### 
+### Graveyard of code that may/may not ever be useful 
+
+# geom_segment(aes(x = middle, xend = middle, y = 1.99, yend = -2)) +
+# geom_point(aes(x = rep(middle, length(ticks_log_lrs)),
+#               y = ticks_log_lrs, label = "+")) +
+
 # ticks_lrs <- c(0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 1,
 #                    2, 5, 10,20, 50, 100, 200, 500, 1000)
 
