@@ -1,9 +1,13 @@
-## Plot simple nomograms as ggplot objects
+## Create simple Fagan nomograms as ggplot objects
 ##   Based on Perl web-implementation (https://araw.mede.uic.edu/cgi-bin/testcalc.pl)
 ##   Authors: AM. Chekroud* & A. Schwartz (* adam dot chekroud at yale . edu)
 ##   December 2016
 
+nomogrammer <- function(Prevalence, Sens, Spec, Plr, Nlr, detail = TRUE, nullLine = FALSE){
+    
 
+    
+    
 ######################################
 ########## Libraries & Functions #####
 ######################################
@@ -52,40 +56,42 @@ p2percent <- function(p){
 
 ## Prevalence
 # needs to exist
-if(missing(input_prev)){
+if(missing(Prevalence)){
     stop("Prevalence is missing")
 }
 # needs to be numeric
-if(!is.numeric(input_prev)){stop("Prevalence should be numeric")}
+if(!is.numeric(Prevalence)){stop("Prevalence should be numeric")}
 # needs to be a prob not a percent
-if((input_prev > 1) | (input_prev <= 0)){stop("Prevalence should be a probability (did you give a %?)")}
+if((Prevalence > 1) | (Prevalence <= 0)){stop("Prevalence should be a probability (did you give a %?)")}
 
 # Did user give sens & spec?
-if(missing(input_sens) | missing(input_spec)){
+if(missing(Sens) | missing(Spec)){
     sensspec <- FALSE
 } else{ sensspec <- TRUE}
-
+# make sure they are numbers
+if(!is.numeric(Sens)){stop("Sensitivity should be numeric")}
+if(!is.numeric(Spec)){stop("Specificity should be numeric")}
+# numbers that are probabilities not percentages
+if((Sens > 1) | (Sens <= 0)){stop("Sensitivity should be a probability (did you give a %?)")}
+if((Spec > 1) | (Spec <= 0)){stop("Specificity should be a probability (did you give a %?)")}
 
 # Did user give PLR & NLR?
-if(missing(input_PLR) | missing(input_NLR)){
+if(missing(Plr) | missing(Nlr)){
     plrnlr <- FALSE
-} else{ plrnlr <- TRUE}
+} else{plrnlr <- TRUE}
+# make sure they are numbers
+if(!is.numeric(Plr)){stop("PLR should be numeric")}
+if(!is.numeric(Nlr)){stop("NLR should be numeric")}
+# numbers that vaguely make sense
+if(Plr < 1){stop("PLR shouldn't be less than 1")}
+if(Nlr < 0){stop("NLR shouldn't be below zero")}
+if(Nlr > 1){stop("NLR shouldn't be more than 1")}
 
 
 
 
 
-input_prev
-input_sens
-input_spec
-input_PLR
-input_NLR
-# input_TP
-# input_FP
-# input_FN
-# input_TN
-detail = TRUE ## optionally exclude 
-nullLine = FALSE ## optionally include
+
 
 
 #                            Obs
@@ -100,10 +106,10 @@ nullLine = FALSE ## optionally include
 ##  otherwise, if plr and nlr provided, we calculate posteriors using them
 ##  if neither exist, then return an error
 if(sensspec == TRUE){
-    prior_prob  <- 0.5                # prevalence
+    prior_prob  <- Prevalence                # prevalence
     prior_odds  <- odds(prior_prob)
-    sensitivity <- 0.9
-    specificity <- 0.9
+    sensitivity <- Sens
+    specificity <- Spec
     PLR <- sensitivity/(1-specificity)
     NLR <- (1-sensitivity)/specificity
     post_odds_pos  <- prior_odds * PLR
@@ -111,12 +117,12 @@ if(sensspec == TRUE){
     post_prob_pos  <- post_odds_pos/(1+post_odds_pos)
     post_prob_neg  <- post_odds_neg/(1+post_odds_neg)
 } else if(plrnlr == TRUE){
-    prior_prob  <- 0.5                # prevalence
+    prior_prob  <- Prevalence                # prevalence
     prior_odds  <- odds(prior_prob)
-    sensitivity <- 0.9
-    specificity <- 0.9
-    PLR <- sensitivity/(1-specificity)
-    NLR <- (1-sensitivity)/specificity
+    PLR <- Plr
+    NLR <- Nlr
+    sensitivity <- (PLR*(1-NLR))/(PLR-NLR)
+    specificity <- (1-PLR)/(NLR-PLR)
     post_odds_pos  <- prior_odds * PLR
     post_odds_neg  <- prior_odds * NLR
     post_prob_pos  <- post_odds_pos/(1+post_odds_pos)
@@ -125,19 +131,16 @@ if(sensspec == TRUE){
         stop("Couldn't find sens & spec, or positive & negative likelihood ratios")
     }
 
-prior_prob  <- 0.5                # prevalence
-prior_odds  <- odds(prior_prob)
-sensitivity <- 0.9
-specificity <- 0.9
-PLR <- sensitivity/(1-specificity)
-NLR <- (1-sensitivity)/specificity
-
-
-
-post_odds_pos  <- prior_odds * PLR
-post_odds_neg  <- prior_odds * NLR
-post_prob_pos  <- post_odds_pos/(1+post_odds_pos)
-post_prob_neg  <- post_odds_neg/(1+post_odds_neg)
+# prior_prob  <- 0.5                # prevalence
+# prior_odds  <- odds(prior_prob)
+# sensitivity <- 0.9
+# specificity <- 0.9
+# PLR <- sensitivity/(1-specificity)
+# NLR <- (1-sensitivity)/specificity
+# post_odds_pos  <- prior_odds * PLR
+# post_odds_neg  <- prior_odds * NLR
+# post_prob_pos  <- post_odds_pos/(1+post_odds_pos)
+# post_prob_neg  <- post_odds_neg/(1+post_odds_neg)
 
 
 
@@ -242,8 +245,7 @@ p <- ggplot(df) +
                                                labels = ticks_prob,
                                                breaks = ticks_logodds))
 
-## Optional: add or remove details in the top right 
-##   overlay includes prevalence, PLR/NLR, and posterior probabilities
+## Optional overlay text: prevalence, PLR/NLR, and posterior probabilities
 detailedAnnotation <- paste(
     paste0("prevalence = ", p2percent(prior_prob)),
     paste("PLR =", signif(PLR, 3),", NLR =", signif(NLR, 3)),
@@ -255,7 +257,6 @@ detailedAnnotation <- paste(
 ## Optional amendments to the plot
 
 ## Do we add the null line i.e. LR = 1, illustrating an uninformative model
-
 if(nullLine == TRUE){
     p <- p + geom_line(aes(x = x, y = lo_y), data = uninformative,
                        color = "gray", 
@@ -273,22 +274,21 @@ if(detail == TRUE){
                       size = rel(14/5))
     }
 
+return(p)
 
-
-
+}
 
 
 
 
 
 ### Graveyard of code that may/may not ever be useful 
-
-# geom_segment(aes(x = middle, xend = middle, y = 1.99, yend = -2)) +
-# geom_point(aes(x = rep(middle, length(ticks_log_lrs)),
-#               y = ticks_log_lrs, label = "+")) +
-
-# ticks_lrs <- c(0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 1,
-#                    2, 5, 10,20, 50, 100, 200, 500, 1000)
-
 # p + ggtitle("test main title", subtitle = "subtitle goes here")
+
+### TODO:
+# Allow ppl to input the confusion matrix 
+# input_TP
+# input_FP
+# input_FN
+# input_TN
 
