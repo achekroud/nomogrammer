@@ -22,6 +22,15 @@ source("https://raw.githubusercontent.com/achekroud/nomogrammer/master/nomogramm
 
 The `nomogrammer` function is a simple visualization function to plot Fagan's nomograms as [`ggplot2`][ggplot2] objects. 
 
+They are used to illustrate the change from pre-test to post-test probabilities that occur when a predictive test is used.
+
+The underlying calculation is as follows:
+
+- $odds = p / (1-p)$ 
+- By Bayes' rule: $posttest (posterior) odds = likelihood ratio * pretest (prior) odds$ 
+- Taking logs: $log(posterior) = log(prior) + log(LR)$
+
+
 ## Rationale
 
 The [Fagan nomogram](http://www.pmean.com/definitions/fagan.htm) is a graphical tool for estimating how much the result on a diagnostic test changes the probability that a patient has a disease (NEJM 1975; 293: 257). Although there are R packages for creating more complicated nomograms (e.g. the `rms` [package](https://cran.r-project.org/web/packages/rms/rms.pdf), and web-implementations for creating simple Fagan nomograms, there is no simple nomogram plotting function in R. 
