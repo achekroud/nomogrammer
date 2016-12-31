@@ -96,9 +96,34 @@ nullLine = FALSE ## optionally include
 #      neg   | False Negative | True Negative  |
 #            +----------------+----------------+
 
-
-
-
+## If sens/spec provided, we calculate posterior probabilities & odds using sens & spec
+##  otherwise, if plr and nlr provided, we calculate posteriors using them
+##  if neither exist, then return an error
+if(sensspec == TRUE){
+    prior_prob  <- 0.5                # prevalence
+    prior_odds  <- odds(prior_prob)
+    sensitivity <- 0.9
+    specificity <- 0.9
+    PLR <- sensitivity/(1-specificity)
+    NLR <- (1-sensitivity)/specificity
+    post_odds_pos  <- prior_odds * PLR
+    post_odds_neg  <- prior_odds * NLR
+    post_prob_pos  <- post_odds_pos/(1+post_odds_pos)
+    post_prob_neg  <- post_odds_neg/(1+post_odds_neg)
+} else if(plrnlr == TRUE){
+    prior_prob  <- 0.5                # prevalence
+    prior_odds  <- odds(prior_prob)
+    sensitivity <- 0.9
+    specificity <- 0.9
+    PLR <- sensitivity/(1-specificity)
+    NLR <- (1-sensitivity)/specificity
+    post_odds_pos  <- prior_odds * PLR
+    post_odds_neg  <- prior_odds * NLR
+    post_prob_pos  <- post_odds_pos/(1+post_odds_pos)
+    post_prob_neg  <- post_odds_neg/(1+post_odds_neg)
+} else{
+        stop("Couldn't find sens & spec, or positive & negative likelihood ratios")
+    }
 
 prior_prob  <- 0.5                # prevalence
 prior_odds  <- odds(prior_prob)
@@ -106,6 +131,7 @@ sensitivity <- 0.9
 specificity <- 0.9
 PLR <- sensitivity/(1-specificity)
 NLR <- (1-sensitivity)/specificity
+
 
 
 post_odds_pos  <- prior_odds * PLR
