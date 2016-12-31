@@ -237,7 +237,8 @@ p <- ggplot(df) +
                  size = rel(14/5)) +
         annotate(geom="point",
                  x = rep(middle, length(ticks_log_lrs)),
-                 y = (ticks_log_lrs-scale_factor)/2) +
+                 y = (ticks_log_lrs-scale_factor)/2,
+                 size = 1) +
         scale_x_continuous(expand = c(0,0)) + 
         scale_y_continuous(expand = c(0,0),
                            limits = rescale,
