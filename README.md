@@ -31,5 +31,5 @@ You may also enjoy:
 - a dynamic visualization in [d3](https://cscheid.net/projects/fagan_nomogram/).
 
 For more involved/complex nomograms, you could use:
-- the [hdnom R-package](https://cran.r-project.org/web/packages/hdnom/vignettes/hdnom.html) in R
+- the [rms](https://cran.r-project.org/web/packages/rms/rms.pdf) or [hdnom](https://cran.r-project.org/web/packages/hdnom/vignettes/hdnom.html) packages in R
 - the [pynomo](http://pynomo.org/wiki/index.php?title=Main_Page) package in Python.
