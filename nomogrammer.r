@@ -3,7 +3,13 @@
 ##   Authors: AM. Chekroud* & A. Schwartz (* adam dot chekroud at yale . edu)
 ##   December 2016
 
-nomogrammer <- function(Prevalence, Sens, Spec, Plr, Nlr, detail = TRUE, nullLine = FALSE){
+nomogrammer <- function(Prevalence,
+                        Sens = NULL,
+                        Spec = NULL,
+                        Plr = NULL,
+                        Nlr = NULL,
+                        detail = TRUE,
+                        nullLine = FALSE){
     
 
     
