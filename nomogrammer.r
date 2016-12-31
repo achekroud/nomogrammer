@@ -75,7 +75,7 @@ if(missing(Sens) | missing(Spec)){
     sensspec <- FALSE
 } else{ sensspec <- TRUE}
 # if yes, make sure they are numbers
-if(sensspect == TRUE){
+if(sensspec == TRUE){
     if(!is.numeric(Sens)){stop("Sensitivity should be numeric")}
     if(!is.numeric(Spec)){stop("Specificity should be numeric")}
     # numbers that are probabilities not percentages
@@ -98,7 +98,10 @@ if(plrnlr == TRUE){
     if(Nlr > 1){stop("NLR shouldn't be more than 1")}
 }
 
-
+# Did they give a valid sensspec and plrnlr? If yes, ignore the LRs and tell them
+if((sensspec == TRUE) && (plrnlr == TRUE) ){
+    warning("You provided sens/spec as well as likelihood ratios-- I ignored the LRs!")
+}
 
 
 
