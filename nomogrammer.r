@@ -68,24 +68,30 @@ if((Prevalence > 1) | (Prevalence <= 0)){stop("Prevalence should be a probabilit
 if(missing(Sens) | missing(Spec)){
     sensspec <- FALSE
 } else{ sensspec <- TRUE}
-# make sure they are numbers
-if(!is.numeric(Sens)){stop("Sensitivity should be numeric")}
-if(!is.numeric(Spec)){stop("Specificity should be numeric")}
-# numbers that are probabilities not percentages
-if((Sens > 1) | (Sens <= 0)){stop("Sensitivity should be a probability (did you give a %?)")}
-if((Spec > 1) | (Spec <= 0)){stop("Specificity should be a probability (did you give a %?)")}
+# if yes, make sure they are numbers
+if(sensspect == TRUE){
+    if(!is.numeric(Sens)){stop("Sensitivity should be numeric")}
+    if(!is.numeric(Spec)){stop("Specificity should be numeric")}
+    # numbers that are probabilities not percentages
+    if((Sens > 1) | (Sens <= 0)){stop("Sensitivity should be a probability (did you give a %?)")}
+    if((Spec > 1) | (Spec <= 0)){stop("Specificity should be a probability (did you give a %?)")}
+}
+
 
 # Did user give PLR & NLR?
 if(missing(Plr) | missing(Nlr)){
     plrnlr <- FALSE
 } else{plrnlr <- TRUE}
-# make sure they are numbers
-if(!is.numeric(Plr)){stop("PLR should be numeric")}
-if(!is.numeric(Nlr)){stop("NLR should be numeric")}
-# numbers that vaguely make sense
-if(Plr < 1){stop("PLR shouldn't be less than 1")}
-if(Nlr < 0){stop("NLR shouldn't be below zero")}
-if(Nlr > 1){stop("NLR shouldn't be more than 1")}
+# if yes, make sure they are numbers
+if(plrnlr == TRUE){
+    if(!is.numeric(Plr)){stop("PLR should be numeric")}
+    if(!is.numeric(Nlr)){stop("NLR should be numeric")}
+    # numbers that vaguely make sense
+    if(Plr < 1){stop("PLR shouldn't be less than 1")}
+    if(Nlr < 0){stop("NLR shouldn't be below zero")}
+    if(Nlr > 1){stop("NLR shouldn't be more than 1")}
+}
+
 
 
 
