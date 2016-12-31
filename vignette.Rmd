@@ -125,9 +125,10 @@ p <- nomogrammer(Prevalence = .60, Sens = 0.421, Spec = 0.965)
 p + ggtitle("put your title here", subtitle = "and your subtitle here")
 ```
 
-You can change the colours of the lines, either the lazy way
+You can change the colours of the lines, either the lazy way (not run)
 
-```{r, eval=T}
+```{r, eval=FALSE}
+## Not run
 nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
     scale_color_manual(values=c("pink", "black"))
 ```
