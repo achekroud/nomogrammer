@@ -8,8 +8,10 @@ nomogrammer <- function(Prevalence,
                         Spec = NULL,
                         Plr = NULL,
                         Nlr = NULL,
-                        Detail = TRUE,
-                        NullLine = FALSE){
+                        Detail = FALSE,
+                        NullLine = FALSE,
+                        LabelSize = (14/5),
+                        Verbose = FALSE){
 
 ## Function inputs:
     # Prevalence (prior probability) as a number between 0 and 1
@@ -23,6 +25,8 @@ nomogrammer <- function(Prevalence,
 ## Function options:
     # Detail: If true, will overlay key statistics onto the plot
     # NullLine: If true, will add a line from prior prob through LR = 1
+    # LabelSize: Tweak this number to change the label sizes
+    # Verbose: Print out relevant metrics in the console
     
 ## Function returns:
     # ggplot object
@@ -234,7 +238,7 @@ p <- ggplot(df) +
                  x = rep(middle+.075, length(ticks_log_lrs)),
                  y = (ticks_log_lrs-scale_factor)/2,
                  label = ticks_lrs,
-                 size = rel(14/5)) +
+                 size = rel(LabelSize)) +
         annotate(geom="point",
                  x = rep(middle, length(ticks_log_lrs)),
                  y = (ticks_log_lrs-scale_factor)/2,
@@ -282,8 +286,24 @@ if(Detail == TRUE){
                       x = midright,
                       y = 2,
                       label = detailedAnnotation,
-                      size = rel(14/5))
+                      size = rel(LabelSize))
     }
+
+if(Verbose == TRUE){
+    writeLines(
+        text = c(
+            paste0("prevalence = ", p2percent(prior_prob)),
+            paste("PLR =", signif(PLR, 3)),
+            paste("NLR =", signif(NLR, 3)),
+            paste("posterior probability (positive) =", p2percent(post_prob_pos)),
+            paste("posterior probability (negative) =", p2percent(post_prob_neg)),
+            paste("sensitivity =", p2percent(sensitivity)),
+            paste("specificity =", p2percent(specificity))
+            # sep = "\n"
+        )
+    )
+    }
+
 
 return(p)
 

@@ -1,0 +1,193 @@
+---
+title: "nomogrammer: Fagan's nomogram using ggplot2"
+author: "Adam M. Chekroud"
+date: "12/31/2016"
+output:
+    html_document:
+        theme: paper
+        toc: true
+        toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, echo=FALSE}
+source("https://raw.githubusercontent.com/achekroud/nomogrammer/master/nomogrammer.r")
+```
+
+# Introduction
+
+The `nomogrammer` function is a simple visualization function to plot Fagan's nomograms as [`ggplot2`][ggplot2] objects. 
+
+## Rationale
+
+The [Fagan nomogram](http://www.pmean.com/definitions/fagan.htm) is a graphical tool for estimating how much the result on a diagnostic test changes the probability that a patient has a disease (NEJM 1975; 293: 257). Although there are R packages for creating more complicated nomograms (e.g. the `rms` [package](https://cran.r-project.org/web/packages/rms/rms.pdf), and web-implementations for creating simple Fagan nomograms, there is no simple nomogram plotting function in R. 
+
+The `nomogrammer` function offers such a plotting method, using the "grammar of graphics" implemented in the [`ggplot2`][ggplot2] package to render the plot. Its output is designed to be close to that which is normally obtained through [online nomogram builders](https://araw.mede.uic.edu/cgi-bin/testcalc.pl). 
+
+## Installation
+
+`nomogrammer` is a standalone function:
+
+```{r, eval=FALSE}
+source("https://raw.githubusercontent.com/achekroud/nomogrammer/master/nomogrammer.r")
+```
+
+## Dependencies
+
+There are two main package dependencies for `nomogrammer`:  [`ggplot2`][ggplot2] and [`scales`][scales]
+
+```{r, message=FALSE, eval = F}
+library(ggplot2)
+library(scales)
+```
+
+The [`ggplot2`][ggplot2] package can be installed from [CRAN](https://cran.r-project.org/) through [`install.packages`](http://www.rdocumentation.org/packages/utils/functions/install.packages). Do the same to install the scales package, i.e. `install.packages("scales")`
+
+# Basic Example
+
+The function always requires the prevalence (i.e. prior probability), expressed as a probability (not a percentage).
+
+You then either give it the positive and negative likelihood ratios:
+
+```{r, eval=FALSE}
+nomogrammer(Prevalence = .60,
+            Plr = 12,
+            Nlr = 0.6)
+```
+
+Or the sensitivity and specificity of the model.
+
+```{r, eval=FALSE}
+nomogrammer(Prevalence = .60,
+            Sens = 0.421,
+            Spec = 0.965)
+```
+
+And it will plot the basic nomogram
+
+```{r, echo = FALSE, eval=TRUE, message = FALSE, warning=FALSE}
+nomogrammer(Prevalence = .60,
+            Sens = 0.421,
+            Spec = 0.965)
+```
+
+The nomogram is returned as a ggplot object, which you could save and plot as usual
+
+```{r, eval=F}
+p <- nomogrammer(Prevalence = .60, Sens = 0.421, Spec = 0.965)
+plot(p)
+```
+
+# Options
+
+There are a couple of optional extras with this function.
+
+You can use the `NullLine` argument to overlay a line that goes from your prior probability through LR = 1, illustrating the posterior probability if it remained unchanged.
+
+```{r, echo = FALSE, eval=TRUE}
+nomogrammer(Prevalence = .60,
+            Sens = 0.421,
+            Spec = 0.965,
+            NullLine = TRUE)
+```
+
+You can use the `Detail` argument to overlay some helpful metrics in the top right corner.
+
+```{r, echo = FALSE, eval=TRUE}
+nomogrammer(Prevalence = .60,
+            Sens = 0.421,
+            Spec = 0.965,
+            Detail = TRUE)
+```
+
+
+# Visual tweaks using `ggplot` methods
+
+Since `nomogrammer` returns a `ggplot` object, it is easy to edit with usual methods
+
+You can add a title, for example
+
+```{r, eval=T}
+p <- nomogrammer(Prevalence = .60, Sens = 0.421, Spec = 0.965)
+p + ggtitle("put your title here", subtitle = "and your subtitle here")
+```
+
+You can change the colours of the lines, either the lazy way
+
+```{r, eval=T}
+nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
+    scale_color_manual(values=c("pink", "black"))
+```
+
+Or the precise way (hex codes):
+
+```{r, eval=T}
+nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
+    scale_color_manual(values=c("#ff7f00", "#b2df8a"))
+```
+
+In general, further control over plot is possible through any  [`theme`](http://docs.ggplot2.org/current/theme.html) and [`guides`](http://docs.ggplot2.org/current/guides.html) methods that also apply:
+
+# Saving
+
+Saving the plot is also easy using the `ggsave` function (here I picked some size settings that looked reasonable):
+
+```{r, echo = TRUE, eval=F}
+p <- nomogrammer(Prevalence = .60, Sens = 0.421, Spec = 0.965)
+
+ggsave(p, file = "~/nomogrammer/plot.pdf",
+       width = 5.99,
+       height = 3.99, units = "in")
+```
+
+And, of course, you can save the plot however you like. Here it will save as a png instead:
+
+```{r, echo = TRUE, eval=F}
+demo <- nomogrammer(Prevalence = .60, Sens = 0.66, Spec=0.77) +
+            ggtitle("Fagan's nomogram",
+                    subtitle = "Example nomogram made with this function")
+
+ggsave(demo, file = "~/nomogrammer/demo.png",
+       width = 5.99,
+       height = 3.99, units = "in")
+```
+
+
+
+PS You can also use the `Verbose` argument if, for whatever reason, you want the function to return the main statistics to the console.
+
+__Note:__ this doesn't work well in Rmd, so isn't run here.
+
+```{r, echo = T, eval=F}
+# Not run:
+# > nomogrammer(Prevalence = .60, Sens = 0.66, Spec=0.77, Verbose = TRUE)
+
+# Returns:
+# prevalence = 60%
+# PLR = 2.87
+# NLR = 0.442
+# posterior probability (positive) = 81.1%
+# posterior probability (negative) = 39.8%
+# sensitivity = 66%
+# specificity = 77%
+```
+
+
+
+
+# Known limitations
+
+`nomogrammer` is strictly limited to plotting Fagan's nomograms quickly: it cannot plot complex nomograms that visualize multiple covariates, or non-linearities. Other packages exist for this (e.g. pynomo, rms, or hdnom)
+
+If you find other limitations or would like to contribute improvements or corrections to `nomogrammer`, please feel free to submit a pull request or [submit an issue](https://github.com/achekroud/nomogrammer/issues), thanks!
+
+---
+
+[colorbrewer]: http://colorbrewer2.org/
+[ggplot2]: http://ggplot2.org/
+[scales]: http://www.rdocumentation.org/packages/scales
+
