@@ -20,6 +20,7 @@ logodds_to_p <- function(lo){
 library(ggplot2)
 
 
+
 ## set all the theme preferences up front so the plot is legible
 theme_set(theme_bw() +
               theme(axis.text.x = element_blank(),
@@ -44,8 +45,7 @@ ticks_lrs     <- sort(c(10^(-3:3), 2*(10^(-3:2)), 5*(10^(-3:2))))
 ticks_log_lrs <- log10(ticks_lrs)
 
  
-prior_prob  <- 0.6
-# prevalence  <- prior_prob*100
+prior_prob  <- 0.6                  # prevalence
 prior_odds  <- odds(prior_prob)
 sensitivity <- 0.9
 specificity <- 0.9
@@ -64,24 +64,46 @@ df <- data.frame(x=c(left, right, left, right),
                  y=c(prior_prob, post_prob_pos, prior_prob, post_prob_neg), 
                  line = c("pos", "pos", "neg", "neg"))
 
-df$lo_y <- logodds(df$y)
+adj_min      <- range(ticks_logodds)[1]
+adj_max      <- range(ticks_logodds)[2]
+adj_diff     <- adj_max - adj_min
+scale_factor <- abs(adj_min) - adj_diff/2
+#df$lo_y <- ifelse(df$x==left,(10/adj_diff)*logodds(1-df$y)-1,logodds(df$y))
+df$lo_y <- ifelse(df$x==left,logodds(1-df$y)-scale_factor,logodds(df$y))
+zero         <- data.frame(x = c(left,right),
+                           y = c(0,0),
+                           line = c('pos','pos'),
+                           lo_y = c(-scale_factor,0))
 
-    
-ggplot(df) +
-    geom_line(aes(x = x, y = lo_y, color = line)) +
-    geom_vline(xintercept = middle) + 
-    ylab("prior \n prob.") +
-    scale_y_continuous(
-        limits = range(ticks_logodds),
-        breaks = ticks_logodds, 
-        labels = rev(ticks_prob),
-        # trans = "reverse",
-        sec.axis = sec_axis(trans = ~., 
-                            name = "posterior \n prob.", 
-                            labels = ticks_prob, 
-                            breaks = ticks_logodds
-                            )
-    )
+
+rescale   <- range(ticks_logodds) + abs(adj_min) - adj_diff/2
+rescale_x_breaks  <- ticks_logodds + abs(adj_min) - adj_diff/2  
+
+p <- ggplot(df) +
+        geom_line(aes(x = x, y = lo_y, color = line)) +
+        # geom_line(aes(x = x, y = lo_y), data=zero, color="green") +
+        geom_vline(xintercept = middle) +
+        annotate(geom = "text",
+                 x = rep(middle+.05, length(ticks_log_lrs)),
+                 y = (ticks_log_lrs-scale_factor)/2,
+                 label = ticks_lrs,
+                 size = 3) +
+        annotate(geom="point",
+                 x = rep(middle, length(ticks_log_lrs)),
+                 y = (ticks_log_lrs-scale_factor)/2) +
+        ylab("prior \n prob.") +
+        scale_x_continuous(expand = c(0, 0)) + 
+        scale_y_continuous(expand = c(0,0),
+                           limits = rescale,
+                           breaks = -rescale_x_breaks,
+                           labels = ticks_prob,
+                           sec.axis = sec_axis(trans = ~.,
+                                               name = "posterior \n prob.",
+                                               labels = ticks_prob,
+                                               breaks = ticks_logodds))
+
+p
+
 
 
 
@@ -95,4 +117,5 @@ ggplot(df) +
 # ticks_lrs <- c(0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 1,
 #                    2, 5, 10,20, 50, 100, 200, 500, 1000)
 
+# p + ggtitle("test main title", subtitle = "subtitle goes here")
 
