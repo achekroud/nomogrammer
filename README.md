@@ -23,7 +23,7 @@ The `nomogrammer` function is fully documented in [this vignette](https://achekr
 If you are feeling fancy, you could try without reading the instructions (!):
 
 ```{r}
-nomogrammer(Prevalence = 0.6, Sensitivity = 0.7, Specificity = 0.8)`
+nomogrammer(Prevalence = 0.6, Sensitivity = 0.7, Specificity = 0.8)
 ```
 
 ### THANKS
