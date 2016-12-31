@@ -4,13 +4,14 @@ author: "Adam M. Chekroud"
 date: "12/31/2016"
 output:
     html_document:
-        theme: paper
+        theme: flatly
         toc: true
         toc_depth: 2
+
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, dev="png")
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev="svg", fig.width=4, fig.height=4, fig.align="center")
 ```
 
 
@@ -27,8 +28,8 @@ They are used to illustrate the change from pre-test to post-test probabilities 
 The underlying calculation is as follows:
 
 - $odds = p / (1-p)$ 
-- By Bayes' rule: $posttest (posterior) odds = likelihood ratio * pretest (prior) odds$ 
-- Taking logs: $log(posterior) = log(prior) + log(LR)$
+- By Bayes' rule :    $posttest (posterior) odds = likelihood ratio * pretest (prior) odds$ 
+- Taking logs :    $log(posterior) = log(prior) + log(LR)$
 
 
 ## Rationale
@@ -106,7 +107,7 @@ nomogrammer(Prevalence = .60,
 
 You can use the `Detail` argument to overlay some helpful metrics in the top right corner.
 
-```{r, echo = FALSE, eval=TRUE}
+```{r, echo = FALSE, eval=TRUE, fig.width=6, fig.height=4}
 nomogrammer(Prevalence = .60,
             Sens = 0.421,
             Spec = 0.965,
@@ -120,7 +121,7 @@ Since `nomogrammer` returns a `ggplot` object, it is easy to edit with usual met
 
 You can add a title, for example
 
-```{r, eval=T, out.width="500px", out.height="500px"}
+```{r, eval=T}
 p <- nomogrammer(Prevalence = .60, Sens = 0.421, Spec = 0.965)
 p + ggtitle("put your title here", subtitle = "and your subtitle here")
 ```
@@ -135,7 +136,7 @@ nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
 
 Or the precise way (hex codes):
 
-```{r, eval=T, out.width="500px", out.height="500px"}
+```{r, eval=T}
 nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
     scale_color_manual(values=c("#ff7f00", "#b2df8a"))
 ```
