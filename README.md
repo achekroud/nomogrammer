@@ -18,7 +18,7 @@ source("https://raw.githubusercontent.com/achekroud/nomogrammer/master/nomogramm
 
 ## VIGNETTE
 
-The `nomogrammer` function is fully documented in [this vignette](https://briatte.github.io/ggcorr).
+The `nomogrammer` function is fully documented in [this vignette](https://github.com/achekroud/nomogrammer/blob/master/vignette.html).
 
 The [vignette source](vignette) is included in this repository.
 
