@@ -120,7 +120,7 @@ Since `nomogrammer` returns a `ggplot` object, it is easy to edit with usual met
 
 You can add a title, for example
 
-```{r, eval=T}
+```{r, eval=T, out.width="500px", out.height="500px"}
 p <- nomogrammer(Prevalence = .60, Sens = 0.421, Spec = 0.965)
 p + ggtitle("put your title here", subtitle = "and your subtitle here")
 ```
@@ -135,7 +135,7 @@ nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
 
 Or the precise way (hex codes):
 
-```{r, eval=T}
+```{r, eval=T, out.width="500px", out.height="500px"}
 nomogrammer(Prevalence = .60, Plr = 120, Nlr = 0.4) +
     scale_color_manual(values=c("#ff7f00", "#b2df8a"))
 ```
