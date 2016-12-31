@@ -1,6 +1,9 @@
 # nomogrammer: Fagan's nomograms with ggplot2
 
-<img src="https://github.com/achekroud/nomogrammer/blob/master/demo.png" width="40">
+<p align="center">
+  <img src="https://github.com/achekroud/nomogrammer/blob/master/demo.png" width="480">
+</p>
+
 
 This repository contains the latest version of the `nomogrammer` function, which allows you to plot Fagan's nomgrams with [`ggplot2`](http://ggplot2.org/).
 
