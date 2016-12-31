@@ -20,6 +20,10 @@ source("https://raw.githubusercontent.com/achekroud/nomogrammer/master/nomogramm
 
 The `nomogrammer` function is fully documented in [this vignette](https://achekroud.github.io/nomogrammer_vignette.html), or you can find the [vignette source](vignette) in this repository.
 
+If you are feeling fancy, you could try without reading the instructions (!):
+
+`nomogrammer(Prevalence = 0.6, Sensitivity = 0.7, Specificity = 0.8)`
+
 ### THANKS
 
 - Alan Schwartz [(UIC)](http://ulan.mede.uic.edu/alansz/) helped me translate this into R based on his [Perl web-implementation](https://araw.mede.uic.edu/cgi-bin/testcalc.pl)
