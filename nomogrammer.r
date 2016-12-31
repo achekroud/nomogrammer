@@ -8,9 +8,24 @@ nomogrammer <- function(Prevalence,
                         Spec = NULL,
                         Plr = NULL,
                         Nlr = NULL,
-                        detail = TRUE,
-                        nullLine = FALSE){
+                        Detail = TRUE,
+                        NullLine = FALSE){
+
+## Function inputs:
+    # Prevalence (prior probability) as a number between 0 and 1
+    # Either
+        # Sens & Spec
+        # model sensitivity and specificity as a number between 0 and 1
+    # Or
+        # Likelihood ratios
+        # Positive and Negative LRs (numeric)
     
+## Function options:
+    # Detail: If true, will overlay key statistics onto the plot
+    # NullLine: If true, will add a line from prior prob through LR = 1
+    
+## Function returns:
+    # ggplot object
 
     
     
@@ -103,19 +118,6 @@ if((sensspec == TRUE) && (plrnlr == TRUE) ){
     warning("You provided sens/spec as well as likelihood ratios-- I ignored the LRs!")
 }
 
-
-
-
-
-
-
-#                            Obs
-#                   present       absent
-#            +----------------+----------------+
-#      pos   | True Positive  | False Positive |
-# Pred       +----------------+----------------+
-#      neg   | False Negative | True Negative  |
-#            +----------------+----------------+
 
 ## If sens/spec provided, we calculate posterior probabilities & odds using sens & spec
 ##  otherwise, if plr and nlr provided, we calculate posteriors using them
@@ -210,6 +212,7 @@ midright <- 0.75
 ## Lay out the four key plot points
 ##  (the start and finish of the positive and negative lines)
 
+# Initially these are expressed as probabilities
 df <- data.frame(x=c(left, right, left, right), 
                  y=c(prior_prob, post_prob_pos, prior_prob, post_prob_neg), 
                  line = c("pos", "pos", "neg", "neg"))
@@ -219,13 +222,16 @@ adj_max      <- range(ticks_logodds)[2]
 adj_diff     <- adj_max - adj_min
 scale_factor <- abs(adj_min) - adj_diff/2
 #df$lo_y <- ifelse(df$x==left,(10/adj_diff)*logodds(1-df$y)-1,logodds(df$y))
+
+# Convert probabilities to logodds for plotting
 df$lo_y  <- ifelse(df$x==left,logodds(1-df$y)-scale_factor,logodds(df$y))
 # zero         <- data.frame(x = c(left,right),
 #                            y = c(0,0),
 #                            line = c('pos','pos'),
 #                            lo_y = c(-scale_factor,0))
-uninformative  <- data.frame(x = c(left,right),
-                             lo_y = c( (logodds(1-prior_prob) - scale_factor) , logodds(prior_prob)) )
+
+
+
 
 
 rescale   <- range(ticks_logodds) + abs(adj_min) - adj_diff/2
@@ -272,7 +278,13 @@ detailedAnnotation <- paste(
 ## Optional amendments to the plot
 
 ## Do we add the null line i.e. LR = 1, illustrating an uninformative model
-if(nullLine == TRUE){
+if(NullLine == TRUE){
+    ## If yes, first calculate the start and end points
+    uninformative <- data.frame(
+        x = c(left,right),
+        lo_y = c( (logodds(1-prior_prob) - scale_factor) , logodds(prior_prob))
+    ) 
+    
     p <- p + geom_line(aes(x = x, y = lo_y), data = uninformative,
                        color = "gray", 
                        lty = 2,
@@ -281,7 +293,7 @@ if(nullLine == TRUE){
 
 
 ## Do we add the detailed stats to the top right?
-if(detail == TRUE){
+if(Detail == TRUE){
     p <- p + annotate(geom = "text",
                       x = midright,
                       y = 2,
@@ -297,8 +309,6 @@ return(p)
 
 
 
-### Graveyard of code that may/may not ever be useful 
-# p + ggtitle("test main title", subtitle = "subtitle goes here")
 
 ### TODO:
 # Allow ppl to input the confusion matrix 
@@ -306,4 +316,11 @@ return(p)
 # input_FP
 # input_FN
 # input_TN
+#                            Obs
+#                   present       absent
+#            +----------------+----------------+
+#      pos   | True Positive  | False Positive |
+# Pred       +----------------+----------------+
+#      neg   | False Negative | True Negative  |
+#            +----------------+----------------+
 
