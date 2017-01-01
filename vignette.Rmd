@@ -16,6 +16,13 @@ Tweet me @[itschekkers](https://twitter.com/itschekkers)!
 knitr::opts_chunk$set(echo = TRUE, dev="svg", fig.width=4, fig.height=4, fig.align="center")
 ```
 
+<!--html_preserve-->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@itschekkers">
+<meta name="twitter:creator" content="@itschekkers">
+<meta name="twitter:title" content="nomogrammer: simple nomogram plots in R using ggplot2">
+<meta name="twitter:description" content="nomograms are an easy way of calculating post-test probabilities for a diagnostic test. Now you can create them in two lines of R code!">
+<!--/html_preserve-->
 
 ```{r, echo=FALSE}
 source("https://raw.githubusercontent.com/achekroud/nomogrammer/master/nomogrammer.r")
