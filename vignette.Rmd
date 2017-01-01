@@ -10,6 +10,8 @@ output:
 
 ---
 
+Tweet me @[itschekkers](https://twitter.com/itschekkers)!
+
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, dev="svg", fig.width=4, fig.height=4, fig.align="center")
 ```
@@ -195,6 +197,9 @@ __Note:__ this doesn't work well in Rmd, so isn't run here.
 `nomogrammer` is strictly limited to plotting Fagan's nomograms quickly: it cannot plot complex nomograms that visualize multiple covariates, or non-linearities. Other packages exist for this (e.g. pynomo, rms, or hdnom)
 
 If you find other limitations or would like to contribute improvements or corrections to `nomogrammer`, please feel free to submit a pull request or [submit an issue](https://github.com/achekroud/nomogrammer/issues), thanks!
+
+Tweet me @[itschekkers](https://twitter.com/itschekkers)!
+
 
 ---
 
